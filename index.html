@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="scss/style.css">
+  <script src="https://unpkg.com/vue@next"></script>
+</head>
+
+<body>
+  <!-- component template -->
+  <script type="text/x-template" id="grid-template">
+      <table class="data_table">
+        <thead>
+          <tr>
+            <th class="table_header" v-for="key in columns"
+              @click="sortBy(key)"
+              :class="{ active: sortKey == key }">
+              {{ capitalize(key) }}
+              <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'">
+              </span>
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr v-for="entry in filteredinfo">
+            <td class="table_info" v-for="key in columns">
+              {{ entry[key] }}
+            </td>
+          </tr>
+        </tbody>
+
+      </table>
+      
+    </script>
+
+  <div id="demo" class="table_demo">
+    <form id="search" class="search">
+      Найти <input name="filter" v-model="searchFilter" />
+    </form>
+    <demo-grid :info="gridData" :columns="gridColumns" :filter-key="searchFilter">
+    </demo-grid>
+  </div>
+  <script src="js/script.js"></script>
+</body>
+
+</html>
