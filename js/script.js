@@ -2,7 +2,11 @@ const app = Vue.createApp({
     el: '#demo',
     data() {
         return {
-            searchFilter: '',
+            loginFilter: '',
+            statusFilter: '',
+            minFilter: '',
+            maxFilter: '',
+
             gridColumns: ['Место', 'Логин', 'Подтвержденные заказы', 'Статус'],
             gridData: [
                 {
@@ -24,7 +28,10 @@ app.component('demo-grid', {
     props: {
         info: Array,
         columns: Array,
-        filterKey: String
+        loginKey: String,
+        statusKey: String,
+        maxKey: String,
+        minKey: String
     }, //массив со свойствами
 
     //начальное состояние данных
@@ -38,26 +45,63 @@ app.component('demo-grid', {
             sortOrders
         }
     },
+
     //вычисляемые свойства
     computed: {
         filteredinfo() {
             const sortKey = this.sortKey;
-            const filterKey = this.filterKey && this.filterKey.toLowerCase()
+            const loginKey = this.loginKey && this.loginKey.toLowerCase()
+            const statusKey = this.statusKey && this.statusKey.toLowerCase()
+            const minKey = this.minKey
+            const maxKey = this.maxKey
             const order = this.sortOrders[sortKey] || 1;
             let info = this.info;
-            if (filterKey) {
+
+            //Фильтр "Логин"
+            if (loginKey) {
                 info = info.filter(function (row) {
                     return Object.keys(row).some(function (key) {
                         return (
-                            key !== "Место" && //выключение фильтра для столбца "Место"
+                            key !== "Место" && key !== "Подтвержденные заказы" && key !== "Статус" &&
                             String(row[key])
                                 .toLowerCase()
-                                .indexOf(filterKey) > -1
+                                .indexOf(loginKey) > -1
                         );
                     });
                 });
             }
 
+            //Фильтр "Статус"
+            if (statusKey) {
+                info = info.filter(function (row) {
+                    return Object.keys(row).some(function (key) {
+                        return (
+                            key !== "Место" && key !== "Подтвержденные заказы" && key !== "Логин" &&
+                            String(row[key])
+                                .toLowerCase()
+                                .indexOf(statusKey) > -1
+                        );
+                    });
+                });
+            }
+
+            //Фильтр "Подтвержденные заказы"
+            if (minKey && maxKey) {
+                info = info.filter(function (row) {
+                    if (row["Подтвержденные заказы"] >= parseInt(minKey) &&
+                        row["Подтвержденные заказы"] <= parseInt(maxKey)) {
+                        return true;
+                    }
+                    return false;
+                });
+            } else if (minKey) { //работа фильтра сразу после введения минимального значения
+                info = info.filter(function (row) {
+                    if (row["Подтвержденные заказы"] >= parseInt(minKey)) {
+                        return true;
+                    }
+                    return false;
+                });
+            }
             //сортировка отфильтрованного массива
             if (sortKey) {
                 info = info.slice().sort(function (a, b) {
@@ -72,6 +116,8 @@ app.component('demo-grid', {
             }
             return info;
         },
+
+
 
         //сортировка порядков
         sortOrders() {
@@ -100,4 +146,3 @@ app.component('demo-grid', {
 })
 
 app.mount('#demo')
-
