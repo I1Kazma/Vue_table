@@ -40,12 +40,25 @@
 
   <div id="demo" class="table_demo">
     <form id="search" class="search">
-      Найти <input name="filter" v-model="searchFilter" />
+      <div>
+        Найти Логин <input name="filter" v-model="loginFilter" />
+      </div>
+      <div>
+        Найти Статус <input name="filter" v-model="statusFilter" />
+      </div>
+      <div style="display:flex; flex-direction: column; gap:10px;">
+        Найти заказы от <input name="filter" v-model="minFilter" />
+        до <input name="filter" v-model="maxFilter" />
+      </div>
+
     </form>
-    <demo-grid :info="gridData" :columns="gridColumns" :filter-key="searchFilter">
+    <demo-grid :info="gridData" :columns="gridColumns" :login-key="loginFilter" :status-key="statusFilter"
+      :min-key="minFilter" :max-key="maxFilter">
     </demo-grid>
   </div>
   <script src="js/script.js"></script>
 </body>
+
+
 
 </html>
